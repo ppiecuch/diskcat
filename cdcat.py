@@ -1075,8 +1075,8 @@ col3 = 100
 space =  '    '
 branch = '|   '
 # pointers:
-tee =    '|── '
-last =   '+── '
+tee =    '|-- '
+last =   '+-- '
 
 def file_size(root, file):
     return bytes2human(os.stat(os.path.join(root, f)).st_size).rjust(col1, ' ')
