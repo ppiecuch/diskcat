@@ -1016,7 +1016,7 @@ def bytes2human(value, precision=2):
 
 def elide_text(string, max_len, pad=True):
     if len(string) <= max_len - 1:
-        return string.rjust(max_len, ' ')
+        return string.rjust(max_len, ' ') if pad else string
     p = re.compile(r'^((?:[\ud800-\udbff][\udc00-\udfff]|.){' + str(max_len - 1) + '}).', re.UNICODE)
     m = p.match(string)
     if not m:
@@ -1026,7 +1026,7 @@ def elide_text(string, max_len, pad=True):
 
 def elide_file(string, max_len, pad=True):
     if len(string) <= max_len - 1:
-        return string.rjust(max_len, ' ')
+        return string.rjust(max_len, ' ') if pad else string
     name, extension = os.path.splitext(string)
     if extension:
         max_len -= len(extension)
@@ -1057,8 +1057,9 @@ def truncate_path(path, max_len):
 # SCAN AND DISPLAY
 #
 
-#d = Dir('/Users/piecuchp/Private/Workspace/_Tools')
-d = Dir('/Users/piecuchp/Downloads')
+folder = '/Users/piecuchp/Private/Workspace/_Tools'
+
+d = Dir(folder)
 
 def file_size(root, file):
     return bytes2human(os.stat(os.path.join(root, f)).st_size).rjust(9, ' ')
@@ -1068,6 +1069,57 @@ def list_folder():
         for f in files:
             print(file_size(root, f), '|', elide_file(f, 45), '|', root)
 
+# prefix components:
+space =  '    '
+branch = '|   '
+# pointers:
+tee =    '|── '
+last =   '+── '
+def tree(paths: dict, prefix: str = ''):
+    """A recursive generator, given a directory Path object
+    will yield a visual tree structure line by line
+    with each line prefixed by the same characters
+    """
+    # contents each get pointers that are ├── with a final └── :
+    pointers = [tee] * (len(paths) - 1) + [last]
+    for pointer, path in zip(pointers, paths):
+        yield prefix + pointer + path
+        if isinstance(paths[path], dict): # extend the prefix and recurse:
+            extension = branch if pointer == tee else space
+            # i.e. space because last, └── , above so no more |
+            yield from tree(paths[path], prefix=prefix+extension)
+
+paths = {}
 for root, dirs, files in d.walk():
+    if (files and dirs) or root == folder:
+        node = paths
+        path = root.replace(folder, '')
+        if path:
+            for p in path[1:].split('/'):
+                if not p in node:
+                    node[p] = {}
+                node = node[p]
+        for f in dirs:
+            node[f] = {}
+
+
+for root, dirs, files in d.walk():
+    if root == folder:
+        print('== ROOT FOLDERS ==')
+        print('------------------')
+        for f in dirs:
+            print('<DIR>'.rjust(9, ' '), '|', elide_file(f, 45), '|')
+        for f in files:
+            print(file_size(root, f), '|', truncate_path(root, 45), '|')
+        print('')
+        print('== FOLDERS TREE ==')
+        print('------------------')
+        print('O')
+        for line in tree(paths):
+            print(line)
+        print('')
+        print('== FILES REPORT ==')
+        print('------------------')
+
     for f in files:
         print(file_size(root, f), '|', elide_file(f, 45), '|', truncate_path(root, 50))
