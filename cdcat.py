@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import logging
 import os
+import sys
 import re
 import hashlib
 from contextlib import closing  # for Python2.6 compatibility
@@ -1057,7 +1058,11 @@ def truncate_path(path, max_len):
 # SCAN AND DISPLAY
 #
 
-folder = '/Users/piecuchp/Private/Workspace/_Tools'
+if len(sys.argv) < 2:
+    print(sys.argv[0], 'Missing argument.')
+    exit()
+
+folder = sys.argv[1]
 
 d = Dir(folder)
 
@@ -1095,8 +1100,12 @@ def tree(paths: dict, prefix: str = ''):
             # i.e. space because last, └── , above so no more |
             yield from tree(paths[path], prefix=prefix+extension)
 
+# build tree info
 paths = {}
+stats = { 'files': 0, 'folders': 0 }
 for root, dirs, files in d.walk():
+    stats['files'] += len(files)
+    stats['folders'] += 1
     if (files and dirs) or root == folder:
         node = paths
         path = root.replace(folder, '')
@@ -1116,6 +1125,8 @@ for root, dirs, files in d.walk():
             print('<DIR>'.rjust(col1, ' '), '|', elide_file(f, col2), '|')
         for f in files:
             print(file_size(root, f), '|', elide_file(f, col2), '|')
+        print('')
+        print('%d files in %d folders' % (stats['files'], stats['folders']))
         print('')
         print('== FOLDERS TREE ==')
         print('------------------')
