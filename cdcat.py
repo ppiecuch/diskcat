@@ -1061,20 +1061,26 @@ folder = '/Users/piecuchp/Private/Workspace/_Tools'
 
 d = Dir(folder)
 
-def file_size(root, file):
-    return bytes2human(os.stat(os.path.join(root, f)).st_size).rjust(9, ' ')
+# table columns
+col1 = 9
+col2 = 40
+col3 = 100
 
-def list_folder():
-    for root, dirs, files in d.walk():
-        for f in files:
-            print(file_size(root, f), '|', elide_file(f, 45), '|', root)
-
-# prefix components:
+# tree prefix components:
 space =  '    '
 branch = '|   '
 # pointers:
 tee =    '|── '
 last =   '+── '
+
+def file_size(root, file):
+    return bytes2human(os.stat(os.path.join(root, f)).st_size).rjust(col1, ' ')
+
+def list_folder():
+    for root, dirs, files in d.walk():
+        for f in files:
+            print(file_size(root, f), '|', elide_file(f, col2), '|', root)
+
 def tree(paths: dict, prefix: str = ''):
     """A recursive generator, given a directory Path object
     will yield a visual tree structure line by line
@@ -1102,15 +1108,14 @@ for root, dirs, files in d.walk():
         for f in dirs:
             node[f] = {}
 
-
 for root, dirs, files in d.walk():
     if root == folder:
         print('== ROOT FOLDERS ==')
         print('------------------')
         for f in dirs:
-            print('<DIR>'.rjust(9, ' '), '|', elide_file(f, 45), '|')
+            print('<DIR>'.rjust(col1, ' '), '|', elide_file(f, col2), '|')
         for f in files:
-            print(file_size(root, f), '|', truncate_path(root, 45), '|')
+            print(file_size(root, f), '|', elide_file(f, col2), '|')
         print('')
         print('== FOLDERS TREE ==')
         print('------------------')
@@ -1122,4 +1127,4 @@ for root, dirs, files in d.walk():
         print('------------------')
 
     for f in files:
-        print(file_size(root, f), '|', elide_file(f, 45), '|', truncate_path(root, 50))
+        print(file_size(root, f), '|', elide_file(f, col2), '|', truncate_path(root, col3))
