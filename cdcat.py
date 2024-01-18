@@ -1066,16 +1066,15 @@ def elide_file(string, max_len, pad=True):
 def truncate_path(path, max_len):
     if len(path) <= max_len - 1:
         return path
-    root, path = path[1:].split('/', maxsplit=1)
-    #print('root', root, 'path', path)
+    print('-path', path)
+    root, path = path[1:].split(os.sep, maxsplit=1)
+    print('root', root, 'path', path)
     pattern = re.compile(r"/?.*?/")
-    for i in range(1, path.count('/')):
-        new_path = pattern.sub('.../', path, i)
-        #print('len', len(new_path), new_path)
+    for i in range(1, path.count(os.sep)):
+        new_path = pattern.sub('...' + os.sep, path, i)
         if len(new_path) < max_len:
-            #print('new_path: ', new_path)
             return os.path.join('/', root, new_path)
-    return os.path.join('/', root, '.../', path.rsplit('/', maxsplit=1)[1]) if '/' in path else path
+    return os.path.join(os.sep, root, '...', os.sep, path.rsplit(os.sep, maxsplit=1)[1]) if os.sep in path else path
 
 
 #
@@ -1087,8 +1086,8 @@ if len(sys.argv) < 2:
     exit()
 
 folder = sys.argv[1]
-
 d = Dir(folder)
+drive, _ = os.path.splitdrive(folder)
 
 # table columns
 col1 = 9
@@ -1135,7 +1134,7 @@ for root, dirs, files in d.walk():
         node = paths
         path = root.replace(folder, '')
         if path:
-            for p in path[1:].split('/'):
+            for p in path[1:].split(os.sep):
                 if not p in node:
                     node[p] = {}
                 node = node[p]
@@ -1163,4 +1162,4 @@ for root, dirs, files in d.walk():
         print('------------------')
 
     for f in files:
-        print(file_size(root, f), '|', elide_file(f, col2), '|', truncate_path(root, col3))
+        print(file_size(root, f), '|', elide_file(f, col2), '|', posix_path(truncate_path(root, col3).replace(folder, '')))
