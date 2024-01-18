@@ -1154,7 +1154,7 @@ for root, dirs, files in d.walk():
         print('')
         print('== FOLDERS TREE ==')
         print('------------------')
-        print('O')
+        print('o')
         for line in tree(paths):
             print(line)
         print('')
