@@ -1129,7 +1129,8 @@ paths = {}
 stats = { 'files': 0, 'folders': 0 }
 for root, dirs, files in d.walk():
     stats['files'] += len(files)
-    stats['folders'] += 1
+    if root != folder: # exclude root folder
+        stats['folders'] += 1
     if (files and dirs) or root == folder:
         node = paths
         path = root.replace(folder, '')
