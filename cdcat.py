@@ -530,6 +530,30 @@ def _filehash(filepath, blocksize=4096):
     return sha
 
 
+def posix_path(fpath):
+    """Convert a filesystem path to a posix path.
+
+    Always use the forward slash as a separator. For instance,
+    in windows the separator is the backslash.
+
+    Args:
+        fpath: The path to convert.
+    """
+    return fpath if os.altsep is None else fpath.replace(os.sep, os.altsep)
+
+
+
+def native_path(fpath):
+    """Convert a filesystem path to a native path.
+
+    Use whatever separator is defined by the platform.
+
+    Args:
+        fpath: The path to convert.
+    """
+    return fpath if os.altsep is None else fpath.replace(os.altsep, os.sep)
+
+
 def filehash(filepath, blocksize=4096):
     """ Return the hash hexdigest() for the file `filepath', processing the file
     by chunk of `blocksize'.
@@ -719,7 +743,7 @@ class Dir(object):
     def is_excluded(self, path):
         """ Return True if `path' should be excluded
         given patterns in the `exclude_file'. """
-        match = self.globster.match(self.relpath(path))
+        match = self.globster.match(self.relpath(path)) or self.globster.match(posix_path(self.relpath(path)))
         if match:
             log.debug("{0} matched {1} for exclusion".format(path, match))
             return True
