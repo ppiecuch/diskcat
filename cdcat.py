@@ -1062,6 +1062,7 @@ def elide_file(string, max_len, pad=True):
         return string + extension
     return re.sub(r'\.*$', r'.', m.group(1)) + extension
 
+_marker = '...' + os.sep
 
 def truncate_path(path, max_len):
     if len(path) <= max_len - 1:
@@ -1071,10 +1072,10 @@ def truncate_path(path, max_len):
     print('root', root, 'path', path)
     pattern = re.compile(r"/?.*?/")
     for i in range(1, path.count(os.sep)):
-        new_path = pattern.sub('...' + os.sep, path, i)
+        new_path = pattern.sub(re.escape(_marker), path, i)
         if len(new_path) < max_len:
             return os.path.join('/', root, new_path)
-    return os.path.join(os.sep, root, '...', os.sep, path.rsplit(os.sep, maxsplit=1)[1]) if os.sep in path else path
+    return os.path.join(os.sep, root, _marker, path.rsplit(os.sep, maxsplit=1)[1]) if os.sep in path else path
 
 
 #
