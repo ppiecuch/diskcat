@@ -1087,10 +1087,11 @@ if len(sys.argv) < 2:
     exit()
 
 folder = sys.argv[1]
-d = Dir(folder)
 drive, folder = os.path.splitdrive(folder)
 if drive and not folder:
     folder = os.path.join(drive, os.sep)
+
+d = Dir(folder)
 
 # table columns
 col1 = 9
@@ -1145,6 +1146,7 @@ for root, dirs, files in d.walk():
             node[f] = {}
 
 for root, dirs, files in d.walk():
+    print(root,folder)
     if root == folder:
         print('== ROOT FOLDERS ==')
         print('------------------')
