@@ -1067,9 +1067,9 @@ _marker = '...' + os.sep
 def truncate_path(path, max_len):
     if len(path) <= max_len - 1:
         return path
-    print('-path', path)
+    #print('>path', path)
     root, path = path[1:].split(os.sep, maxsplit=1)
-    print('root', root, 'path', path)
+    #print('<root', root, 'path', path)
     pattern = re.compile(r"/?.*?/")
     for i in range(1, path.count(os.sep)):
         new_path = pattern.sub(re.escape(_marker), path, i)
@@ -1088,7 +1088,9 @@ if len(sys.argv) < 2:
 
 folder = sys.argv[1]
 d = Dir(folder)
-drive, _ = os.path.splitdrive(folder)
+drive, folder = os.path.splitdrive(folder)
+if drive and not folder:
+    folder = os.path.join(drive, os.sep)
 
 # table columns
 col1 = 9
@@ -1163,4 +1165,4 @@ for root, dirs, files in d.walk():
         print('------------------')
 
     for f in files:
-        print(file_size(root, f), '|', elide_file(f, col2), '|', posix_path(truncate_path(root, col3).replace(folder, '')))
+        print(file_size(root, f), '|', elide_file(f, col2), '|', posix_path(truncate_path(root.replace(drive, ''), col3).replace(folder, '')))
