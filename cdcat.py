@@ -1146,7 +1146,6 @@ for root, dirs, files in d.walk():
             node[f] = {}
 
 for root, dirs, files in d.walk():
-    print(root,folder)
     if root == folder:
         print('== ROOT FOLDERS ==')
         print('------------------')
