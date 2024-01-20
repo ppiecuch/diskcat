@@ -1150,9 +1150,9 @@ for root, dirs, files in d.walk():
         print('== ROOT FOLDERS ==')
         print('------------------')
         for f in dirs:
-            print('<DIR>'.rjust(col1, ' '), '|', elide_file(f, col2), '|')
+            print('<DIR>'.rjust(col1, ' '), '|', f)
         for f in files:
-            print(file_size(root, f), '|', elide_file(f, col2), '|')
+            print(file_size(root, f), '|', f)
         print('')
         print('%d files in %d folders' % (stats['files'], stats['folders']))
         print('')
