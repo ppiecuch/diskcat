@@ -1094,7 +1094,7 @@ if drive and not folder:
 d = Dir(folder)
 
 # table columns
-col1 = 9
+col1 = 10
 col2 = 40
 col3 = 100
 
