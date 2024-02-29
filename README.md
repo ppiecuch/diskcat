@@ -60,10 +60,13 @@ echo -- %vol% --
 echo == %vol% == > "%cat%"
 echo. >> "%cat%"
 
-vol f: >> "%cat%"
+vol F: >> "%cat%"
 echo. >> "%cat%"
 
 set PYTHONIOENCODING=utf-8
+
+
+
 
 python --version
 python diskcat/cdcat.py F: >> "%cat%"
@@ -71,7 +74,7 @@ python diskcat/cdcat.py F: >> "%cat%"
 echo.
 echo -- Done.
 
-cdr open f:
+cdr open F:
 
 :end
 ```

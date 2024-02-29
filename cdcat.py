@@ -1105,8 +1105,17 @@ branch = '|   '
 tee =    '|-- '
 last =   '+-- '
 
+def winapi_path(dos_path):
+    path = os.path.abspath(dos_path)
+    if path.startswith("\\\\"):
+        return f"\\\\?\\UNC\\{path[2:]}"
+    return f"\\\\?\\{path}"
+
 def file_size(root, file):
-    return bytes2human(os.stat(os.path.join(root, f)).st_size).rjust(col1, ' ')
+    try:
+        return bytes2human(os.stat(os.path.join(root, f)).st_size).rjust(col1, ' ')
+    except (FileNotFoundError):
+        return bytes2human(os.stat(winapi_path(os.path.join(root, f))).st_size).rjust(col1, ' ')
 
 def list_folder():
     for root, dirs, files in d.walk():
